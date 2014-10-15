@@ -1,0 +1,3 @@
+las_venturas_blackjack_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: LasVenturasBlackjackBundle:Default:index }

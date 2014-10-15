@@ -1,0 +1,4 @@
+las_venturas_blackjack:
+    resource: "@LasVenturasBlackjackBundle/Resources/config/routing.yml"
+    prefix:   /
+
