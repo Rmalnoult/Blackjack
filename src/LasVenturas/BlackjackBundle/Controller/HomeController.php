@@ -6,9 +6,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class HomeController extends Controller
 {
+
     public function indexAction()
     {
-    	$name = 'romain';
-        return $this->render('LasVenturasBlackjackBundle:Default:index.html.twig', array('name' => $name));
+    	// if user is auth with a cookie, get info from cookie, say hello, offer link to play a game
+    	// else if no cookie is available, welcome new player, present a form to auth (just a username)and let's play a game.
+    }
+    public function login()
+    {
+
+    }
+    public function signup()
+    {
+
     }
 }
