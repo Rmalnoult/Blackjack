@@ -3,6 +3,7 @@
 namespace LasVenturas\BlackjackBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -22,6 +23,7 @@ class User
     private $id;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=100)
      */
     protected $name;
