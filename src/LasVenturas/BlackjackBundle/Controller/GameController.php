@@ -3,6 +3,8 @@
 namespace LasVenturas\BlackjackBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LasVenturas\BlackjackBundle\Entity\User;
+
 
 class GameController extends Controller
 {
@@ -10,6 +12,11 @@ class GameController extends Controller
     {
     	var_dump('game initialized');
     	// get user wallet content
+        $repository = $this->getDoctrine()
+            ->getRepository('LasVenturasBlackjackBundle:User');
+
+        $user = $repository->findOneByName($cookie);
+               
     	// offer to choose a bet (range)
     	// render view with button start the game
     }

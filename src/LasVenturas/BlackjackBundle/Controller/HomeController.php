@@ -16,7 +16,6 @@ use LasVenturas\BlackjackBundle\Entity\User;
 class HomeController extends Controller
 {
 
-
     public function isLoggedIn()
     {
          if (isset($_COOKIE['blackJackPlayer'])) {
