@@ -18,17 +18,17 @@ class HomeController extends Controller
 
     public function isLoggedIn()
     {
-         if (isset($_COOKIE['blackJackPlayer'])) {
+         if ($session->get('blackJackPlayer')) {
 
-            $cookie = $_COOKIE['blackJackPlayer'];
+            $sessionName = $session->get('blackJackPlayer');
 
             $repository = $this->getDoctrine()
                 ->getRepository('LasVenturasBlackjackBundle:User');
 
-            $user = $repository->findOneByName($cookie);
+            $user = $repository->findOneByName($sessionName);
             $userName = $user->getName();
 
-            if ($cookie = $userName){
+            if ($sessionName = $userName){
                 return true;               
             }
 
@@ -46,14 +46,9 @@ class HomeController extends Controller
 
         if ($this->isLoggedIn()) {
             var_dump('loggedIn');
-        } else {
-            var_dump('not loggedIn');
-        }
-
-        if (isset($_COOKIE['blackJackPlayer'])) {
             return $this->login($request);
         } else {
-
+            var_dump('not loggedIn');
             return $this->signup($request);
         }
     }
@@ -64,9 +59,9 @@ class HomeController extends Controller
     {
         $request = $this->getRequest();
         $session = $request->getSession();
-        var_dump('session'.$request);
+        var_dump('session'.$session);
 
-        var_dump('dat dude has a cookie');
+        var_dump('cookie found');
         var_dump('dat cookie: '.$_COOKIE['blackJackPlayer']);
         $cookie = $_COOKIE['blackJackPlayer'];
 
@@ -93,8 +88,7 @@ class HomeController extends Controller
 
     public function signup($request)
     {       
-        $user = new User();
-        $user->setName(' ');          
+        $user = new User();         
         $form = $this->createFormBuilder($user)
             ->add('Name', 'text')
             ->add('save', 'submit', array('label' => ' Register '))
@@ -104,12 +98,15 @@ class HomeController extends Controller
 
         if ($form->isValid()) {
             var_dump('signing up');
-            $cookieName = $user->getName();
-            $response = new Response();
-            $response->headers->setCookie(new Cookie('blackJackPlayer', $cookieName, 0, '/', null, false, false));
-            $response->send();
+            $userName = $user->getName();
+            $user->setName($userName); 
+
+            $session = $request->getSession();
+            // store an attribute for reuse during a later user request
+            $session->set('blackJackPlayer', $userName);
 
             var_dump('user: '.$user->getName());
+            var_dump('userinsession: '.$session->get('blackJackPlayer'));
             $user->setWallet(10000);
 
             $em = $this->getDoctrine()->getManager();
