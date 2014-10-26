@@ -35,7 +35,69 @@ class Round
     protected $user;
 
 
-  
+    protected $deck = array(
+        array( 'card' => 'Ace', 'color' => 'spades', 'value' => 11),
+        array( 'card' => '2', 'color' => 'spades', 'value' => 2),
+        array( 'card' => '3', 'color' => 'spades', 'value' => 3),
+        array( 'card' => '4', 'color' => 'spades', 'value' => 4),
+        array( 'card' => '5', 'color' => 'spades', 'value' => 5),
+        array( 'card' => '6', 'color' => 'spades', 'value' => 6),
+        array( 'card' => '7', 'color' => 'spades', 'value' => 7),
+        array( 'card' => '8', 'color' => 'spades', 'value' => 8),
+        array( 'card' => '9', 'color' => 'spades', 'value' => 9),
+        array( 'card' => '10', 'color' => 'spades', 'value' => 10),
+        array( 'card' => 'Jack', 'color' => 'spades', 'value' => 10),
+        array( 'card' => 'Queen', 'color' => 'spades', 'value' => 10),
+        array( 'card' => 'King', 'color' => 'spades', 'value' => 10),
+
+        array( 'card' => 'Ace', 'color' => 'clubs', 'value' => 11),
+        array( 'card' => '2', 'color' => 'clubs', 'value' => 2),
+        array( 'card' => '3', 'color' => 'clubs', 'value' => 3),
+        array( 'card' => '4', 'color' => 'clubs', 'value' => 4),
+        array( 'card' => '5', 'color' => 'clubs', 'value' => 5),
+        array( 'card' => '6', 'color' => 'clubs', 'value' => 6),
+        array( 'card' => '7', 'color' => 'clubs', 'value' => 7),
+        array( 'card' => '8', 'color' => 'clubs', 'value' => 8),
+        array( 'card' => '9', 'color' => 'clubs', 'value' => 9),
+        array( 'card' => '10', 'color' => 'clubs', 'value' => 10),
+        array( 'card' => 'Jack', 'color' => 'clubs', 'value' => 10),
+        array( 'card' => 'Queen', 'color' => 'clubs', 'value' => 10),
+        array( 'card' => 'King', 'color' => 'clubs', 'value' => 10),
+
+        array( 'card' => 'Ace', 'color' => 'diamonds', 'value' => 11),
+        array( 'card' => '2', 'color' => 'diamonds', 'value' => 2),
+        array( 'card' => '3', 'color' => 'diamonds', 'value' => 3),
+        array( 'card' => '4', 'color' => 'diamonds', 'value' => 4),
+        array( 'card' => '5', 'color' => 'diamonds', 'value' => 5),
+        array( 'card' => '6', 'color' => 'diamonds', 'value' => 6),
+        array( 'card' => '7', 'color' => 'diamonds', 'value' => 7),
+        array( 'card' => '8', 'color' => 'diamonds', 'value' => 8),
+        array( 'card' => '9', 'color' => 'diamonds', 'value' => 9),
+        array( 'card' => '10', 'color' => 'diamonds', 'value' => 10),
+        array( 'card' => 'Jack', 'color' => 'diamonds', 'value' => 10),
+        array( 'card' => 'Queen', 'color' => 'diamonds', 'value' => 10),
+        array( 'card' => 'King', 'color' => 'diamonds', 'value' => 10),
+
+        array( 'card' => 'Ace', 'color' => 'heart', 'value' => 11),
+        array( 'card' => '2', 'color' => 'heart', 'value' => 2),
+        array( 'card' => '3', 'color' => 'heart', 'value' => 3),
+        array( 'card' => '4', 'color' => 'heart', 'value' => 4),
+        array( 'card' => '5', 'color' => 'heart', 'value' => 5),
+        array( 'card' => '6', 'color' => 'heart', 'value' => 6),
+        array( 'card' => '7', 'color' => 'heart', 'value' => 7),
+        array( 'card' => '8', 'color' => 'heart', 'value' => 8),
+        array( 'card' => '9', 'color' => 'heart', 'value' => 9),
+        array( 'card' => '10', 'color' => 'heart', 'value' => 10),
+        array( 'card' => 'Jack', 'color' => 'heart', 'value' => 10),
+        array( 'card' => 'Queen', 'color' => 'heart', 'value' => 10),
+        array( 'card' => 'King', 'color' => 'heart', 'value' => 10),
+
+        );
+
+    public function getDeck()
+    {
+        return $this->deck;
+    }
 
     /**
      * Get id
@@ -76,22 +138,6 @@ class Round
      * @param \LasVenturas\BlackjackBundle\Entity\User $user
      * @return Round
      */
-    public function addUser(\LasVenturas\BlackjackBundle\Entity\User $user)
-    {
-        $this->user[] = $user;
-
-        return $this;
-    }
-
-    /**
-     * Remove user
-     *
-     * @param \LasVenturas\BlackjackBundle\Entity\User $user
-     */
-    public function removeUser(\LasVenturas\BlackjackBundle\Entity\User $user)
-    {
-        $this->user->removeElement($user);
-    }
 
     /**
      * Get user
@@ -101,13 +147,6 @@ class Round
     public function getUser()
     {
         return $this->user;
-    }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->user = new ArrayCollection();
     }
 
 

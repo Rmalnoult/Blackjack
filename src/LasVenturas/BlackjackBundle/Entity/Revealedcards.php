@@ -21,6 +21,17 @@ class Revealedcards
      */
     private $id;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Round", inversedBy="user")
+     * @ORM\JoinColumn(name="round_id", referencedColumnName="id")
+     */
+    private $roundId;
+    
+    /**
+     * @ORM\Column(type="decimal", scale=2)
+     */
+    private $cardId;
+
 
     /**
      * Get id
@@ -30,5 +41,51 @@ class Revealedcards
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set cardId
+     *
+     * @param string $cardId
+     * @return Revealedcards
+     */
+    public function setCardId($cardId)
+    {
+        $this->cardId = $cardId;
+
+        return $this;
+    }
+
+    /**
+     * Get cardId
+     *
+     * @return string 
+     */
+    public function getCardId()
+    {
+        return $this->cardId;
+    }
+
+    /**
+     * Set roundId
+     *
+     * @param \LasVenturas\BlackjackBundle\Entity\Round $roundId
+     * @return Revealedcards
+     */
+    public function setRoundId(\LasVenturas\BlackjackBundle\Entity\Round $roundId = null)
+    {
+        $this->roundId = $roundId;
+
+        return $this;
+    }
+
+    /**
+     * Get roundId
+     *
+     * @return \LasVenturas\BlackjackBundle\Entity\Round 
+     */
+    public function getRoundId()
+    {
+        return $this->roundId;
     }
 }

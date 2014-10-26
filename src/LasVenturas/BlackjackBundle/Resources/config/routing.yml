@@ -2,10 +2,6 @@ las_venturas_blackjack_homepage:
     path:     /
     defaults: { _controller: LasVenturasBlackjackBundle:Home:index }
 
-las_venturas_blackjack_pregame:
-    path:     /pregame
-    defaults: { _controller: LasVenturasBlackjackBundle:PreGame:index}
-
 las_venturas_blackjack_game:
     path:     /game
     defaults: { _controller: LasVenturasBlackjackBundle:Game:index}
