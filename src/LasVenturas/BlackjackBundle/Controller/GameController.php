@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 use LasVenturas\BlackjackBundle\Entity\User;
+use LasVenturas\BlackjackBundle\Entity\Round;
 
 
 class GameController extends Controller
@@ -31,6 +32,8 @@ class GameController extends Controller
     }
     public function initGame($userName) {
         
+        // initialize new round entity
+        $round = new Round();
         // doctrine's syntax to load the User
         $repository = $this->getDoctrine()
             ->getRepository('LasVenturasBlackjackBundle:User');
@@ -40,20 +43,35 @@ class GameController extends Controller
         $credit = $user->getWallet();        
 
         // create a form to choose a bet (range)    
-        $form = $this->createFormBuilder()
-            ->add('bet', 'choice')
-            ->add('save', 'submit', array('label' => ' Register '))
+        $form = $this->createFormBuilder($round)
+            ->add('bet', 'number')
+            ->add('save', 'submit', array('label' => ' Lets go ! '))
             ->getForm();
         // get the validated form and handle it
         $request = $this->getRequest();
         $form->handleRequest($request);
         // if form is valid
         if ($form->isValid()) {
-            var_dump('signing up');
-            // store the bet that the user chose
-            $userBet = $bet->getbet();
+            var_dump('form validated, user is : '.$userName);
 
-            var_dump('userbet '.$userBet);
+
+
+
+            // store the bet that the user chose
+            $userBet = $round->getbet();
+
+            // get the current user
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository('LasVenturasBlackjackBundle:User')->findOneByName($userName);
+            // take the bet out his wallet
+            $userWallet = $user->getWallet();
+            $userWallet = $userWallet - $userBet;
+            $user->setWallet($userWallet);
+            // flush to update the changes permanently in the database
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($round);
+            $em->flush();
+
         }
 
         var_dump('Playa : '.$userName);   
@@ -61,6 +79,8 @@ class GameController extends Controller
         // render view with button start the game   
         return $this->render('LasVenturasBlackjackBundle:Game:pregame.html.twig', array(
             'form' => $form->createView(),
+            'username' => $userName,
+            'credit' => $credit
         )); 
 
 

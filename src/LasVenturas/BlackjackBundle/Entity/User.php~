@@ -3,6 +3,7 @@
 namespace LasVenturas\BlackjackBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -22,17 +23,18 @@ class User
     private $id;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=100)
      */
     protected $name;
 
     /**
-     * @ORM\Column(type="decimal", scale=12)
+     * @ORM\Column(type="decimal", scale=2)
      */
     protected $wallet;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Games", inversedBy="games")
+     * @ORM\ManyToOne(targetEntity="Round", inversedBy="user")
      * @ORM\JoinColumn(name="games_id", referencedColumnName="id")
      */
     protected $games;

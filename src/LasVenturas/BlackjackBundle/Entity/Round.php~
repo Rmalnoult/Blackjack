@@ -135,12 +135,4 @@ class Round
     {
         return $this->user;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->user = new ArrayCollection();
-    }
-
 }

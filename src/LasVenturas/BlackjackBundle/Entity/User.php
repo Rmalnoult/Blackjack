@@ -34,7 +34,7 @@ class User
     protected $wallet;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Games", inversedBy="games")
+     * @ORM\ManyToOne(targetEntity="Round", inversedBy="user")
      * @ORM\JoinColumn(name="games_id", referencedColumnName="id")
      */
     protected $games;
