@@ -96,6 +96,8 @@ class GameController extends Controller
         $score = 0;
         $card1 = $this->getRandomCard($deck, $roundId);
         $card2 = $this->getRandomCard($deck, $roundId);
+        var_dump('deck: '.$card1['card'].' of '.$card1['color']);
+        var_dump('deck: '.$card2['card'].' of '.$card2['color']);
         die;
     	// render the view + links : hit me / that's ok
     }
@@ -105,11 +107,9 @@ class GameController extends Controller
 		// get a random card
 		$cardId = rand(1, 52);
 		var_dump('random card id: '.$cardId);
-        var_dump('deck: '.$deck[$cardId]['card'].' of '.$deck[$cardId]['color']);
-		$card = $deck[$cardId]['card'];
+		$card = $deck[$cardId];
 		$color = $deck[$cardId]['color'];
-		
-		die;
+		return $card;
 	}
 
 
