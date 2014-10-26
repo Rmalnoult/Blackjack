@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use LasVenturas\BlackjackBundle\Entity\User;
 use LasVenturas\BlackjackBundle\Entity\Round;
+use LasVenturas\BlackjackBundle\Entity\Revealedcards;
 
 class GameController extends Controller
 {
@@ -69,7 +70,6 @@ class GameController extends Controller
 
             
             // flush to update the changes permanently in the database
-            $em = $this->getDoctrine()->getManager();
             // $em->persist($round);
             $em->persist($user);
             $em->flush();
@@ -92,12 +92,15 @@ class GameController extends Controller
         // initialise le deck, 
         $deck = $round->getDeck();
         $roundId = $round->getId();
-        var_dump('deck initialized');
+        var_dump('roundId: '.$roundId);
         $score = 0;
         $card1 = $this->getRandomCard($deck, $roundId);
         $card2 = $this->getRandomCard($deck, $roundId);
         var_dump('deck: '.$card1['card'].' of '.$card1['color']);
         var_dump('deck: '.$card2['card'].' of '.$card2['color']);
+
+
+        // new 
         die;
     	// render the view + links : hit me / that's ok
     }
@@ -108,10 +111,27 @@ class GameController extends Controller
 		$cardId = rand(1, 52);
 		var_dump('random card id: '.$cardId);
 		$card = $deck[$cardId];
-		$color = $deck[$cardId]['color'];
+		$this->storeRevealedCard($roundId, $cardId);
 		return $card;
-	}
 
+	}
+	public function storeRevealedCard($roundId, $cardId)
+	{
+		// new revealed card
+		$revealedCard = new Revealedcards();
+		$revealedCard->setCardId($cardId);
+		$revealedCard->setRoundId($roundId);
+		$revcardId = $revealedCard->getCardId();
+		// $em = $this->getDoctrine()->getManager();		
+		// $em->persist($revealedCard);
+		// $em->flush();
+		var_dump('card stored id : '.$revcardId);
+
+		// setRoundId($roundId)
+		
+
+		// setCardId
+	}
 
 
 }

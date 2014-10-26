@@ -22,8 +22,7 @@ class Revealedcards
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Round", inversedBy="user")
-     * @ORM\JoinColumn(name="round_id", referencedColumnName="id")
+     * @ORM\Column(type="decimal", scale=2)
      */
     private $roundId;
     
