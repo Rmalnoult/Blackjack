@@ -3,7 +3,8 @@ namespace LasVenturas\BlackjackBundle\Service;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Cookie;
-
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use LasVenturas\BlackjackBundle\Entity\User;
 
 
@@ -32,6 +33,11 @@ class LoginControl {
         $cookieName = $request->cookies->get('blackJackPlayer');
         return $cookieName;    	
     }
+
+    public function redirectToHome() {
+        $response = new RedirectResponse('/');
+        return $response;
+    }    
 
 
 }

@@ -30,7 +30,7 @@ class Round
     protected $bet;
 
     /**
-     * @ORM\OneToMany(targetEntity="User", mappedBy="games_id")
+     * @ORM\Column(type="decimal")
      */
     protected $user;
 
@@ -71,39 +71,6 @@ class Round
     }
 
     /**
-     * Add products
-     *
-     * @param \LasVenturas\BlackjackBundle\Entity\User $products
-     * @return Round
-     */
-    public function addProduct(\LasVenturas\BlackjackBundle\Entity\User $products)
-    {
-        $this->products[] = $products;
-
-        return $this;
-    }
-
-    /**
-     * Remove products
-     *
-     * @param \LasVenturas\BlackjackBundle\Entity\User $products
-     */
-    public function removeProduct(\LasVenturas\BlackjackBundle\Entity\User $products)
-    {
-        $this->products->removeElement($products);
-    }
-
-    /**
-     * Get products
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getProducts()
-    {
-        return $this->products;
-    }
-
-    /**
      * Add user
      *
      * @param \LasVenturas\BlackjackBundle\Entity\User $user
@@ -134,5 +101,26 @@ class Round
     public function getUser()
     {
         return $this->user;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->user = new ArrayCollection();
+    }
+
+
+    /**
+     * Set user
+     *
+     * @param string $user
+     * @return Round
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }
