@@ -7,44 +7,25 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 
 
 use LasVenturas\BlackjackBundle\Entity\User;
 
+
+use LasVenturas\BlackjackBundle\Controller\DefaultController;
+
 class HomeController extends Controller
 {
 
-    public function isLoggedIn()
-    {
-         if ($session->get('blackJackPlayer')) {
-
-            $sessionName = $session->get('blackJackPlayer');
-
-            $repository = $this->getDoctrine()
-                ->getRepository('LasVenturasBlackjackBundle:User');
-
-            $user = $repository->findOneByName($sessionName);
-            $userName = $user->getName();
-
-            if ($sessionName = $userName){
-                return true;               
-            }
-
-        } else {
-            return false;
-        }              
-    }
-
-
     public function indexAction(Request $request)
     {
-    	// if user is auth with a cookie, get info from cookie, say hello, offer link to play a game
-    	// else if no cookie is available, welcome new player, present a form to auth (just a username)and let's play a game.
-        // var_dump($Response);
+        // play isLoggedIn function to see if a cookie is found
+        // isLoggedIn is a service 
+        $LoginControlService = $this->get('las_venturas_blackjack.loginControl');
 
-        if ($this->isLoggedIn()) {
+        if ($LoginControlService->isLoggedIn($request)) {
             var_dump('loggedIn');
             return $this->login($request);
         } else {
@@ -53,23 +34,26 @@ class HomeController extends Controller
         }
     }
 
-
-
     public function login()
     {
+
+        // when no cookie parameter is found, this function is played
+
+
         $request = $this->getRequest();
-        $session = $request->getSession();
-        var_dump('session'.$session);
-
         var_dump('cookie found');
-        var_dump('dat cookie: '.$_COOKIE['blackJackPlayer']);
-        $cookie = $_COOKIE['blackJackPlayer'];
+        var_dump('dat cookie: '.$request->cookies->get('blackJackPlayer'));
 
+
+        //get the name associated with the cookie
+        $cookieName = $request->cookies->get('blackJackPlayer');
+
+        // doctrine's syntax to load the User
         $repository = $this->getDoctrine()
             ->getRepository('LasVenturasBlackjackBundle:User');
-
-        $user = $repository->findOneByName($cookie);
-
+        // get the username found in the cookie from the user database
+        $user = $repository->findOneByName($cookieName);
+        // store the username in a variable
         $userName = $user->getName();
         var_dump('userName: '.$userName);
 
@@ -87,37 +71,51 @@ class HomeController extends Controller
 
 
     public function signup($request)
-    {       
-        $user = new User();         
+    {   
+        // initialize a new user entity    
+        $user = new User();  
+        // create a signup form       
         $form = $this->createFormBuilder($user)
             ->add('Name', 'text')
             ->add('save', 'submit', array('label' => ' Register '))
             ->getForm();
-
+        // get the validated form and handle it
         $form->handleRequest($request);
 
+        // if form is valid
         if ($form->isValid()) {
             var_dump('signing up');
+            // store the username from the form in a variable
             $userName = $user->getName();
+            // store the username in database
             $user->setName($userName); 
 
-            $session = $request->getSession();
-            // store an attribute for reuse during a later user request
-            $session->set('blackJackPlayer', $userName);
-
             var_dump('user: '.$user->getName());
-            var_dump('userinsession: '.$session->get('blackJackPlayer'));
+
+            // initialize the user's wallet
             $user->setWallet(10000);
 
+            // validate database operations
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            return $this->redirect('/');
+
+            // We create a new cookie that lasts a day
+            $cookie = new Cookie('blackJackPlayer', $userName, time() + 3600 * 24);
+            // we implement a new response object (it's actually a redirect response, merci le symfony component qui permet cela)
+            $response = new RedirectResponse('/');
+            // and we pass it the cookie we have created
+            var_dump('userincookie: '.$request->cookies->get('blackJackPlayer'));
+            $response->headers->setCookie($cookie);
+            // Then we send and return the response (to implement the cookie in the browser) and also redirect to home at the same time
+            return $response;
         }
 
+        // if form is not yet complete or invalid => render the signup page + passing the form to it
         return $this->render('LasVenturasBlackjackBundle:Default:signup.html.twig', array(
             'form' => $form->createView(),
         ));
          
-    }
+    }   
+
 }
