@@ -44,8 +44,8 @@ class GameController extends Controller
 
         // create a form to choose a bet (range)    
         $form = $this->createFormBuilder($round)
-            ->add('bet', 'number')
-            ->add('save', 'submit', array('label' => ' Lets go ! '))
+            ->add('bet', 'number', array('label' => ' Bet : '))
+            ->add('save', 'submit', array('label' => ' BET ! '))
             ->getForm();
         // get the validated form and handle it
         $request = $this->getRequest();
@@ -79,7 +79,7 @@ class GameController extends Controller
         // render view with button start the game   
         return $this->render('LasVenturasBlackjackBundle:Game:pregame.html.twig', array(
             'form' => $form->createView(),
-            'username' => $userName,
+            'name' => $userName,
             'credit' => $credit
         )); 
 

@@ -1,10 +1,21 @@
 {% extends "LasVenturasBlackjackBundle::layout.html.twig" %}
 
-{% block title "Symfony - Demos" %}
 
-{% block content_header '' %}
+
+
 
 {% block content %}
-	<p>How much ya wanna bet ?</p>
-	{{ form(form) }}
+<div class="content pregame">
+
+<div class="card bet">
+	<h3>So {{name}}, How much ya wanna bet ?</h3>
+	<div class="betform">{{ form(form) }}</div>	
+</div>
+<div class="card credit">
+	<h3>Crédits</h3>
+	<p>{{credit}}</p>
+</div>
+
+</div>
+
 {% endblock %}
