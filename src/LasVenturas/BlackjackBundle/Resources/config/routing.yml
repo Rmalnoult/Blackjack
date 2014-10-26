@@ -4,7 +4,7 @@ las_venturas_blackjack_homepage:
 
 las_venturas_blackjack_game:
     path:     /game
-    defaults: { _controller: LasVenturasBlackjackBundle:Game:initGame }
+    defaults: { _controller: LasVenturasBlackjackBundle:Game:index}
 
 las_venturas_blackjack_stats:
     path:     /stats

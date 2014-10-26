@@ -1,4 +1,4 @@
 services:
     las_venturas_blackjack.loginControl:
         class: LasVenturas\BlackjackBundle\Service\LoginControl
-        arguments: []
+        arguments: [@doctrine]

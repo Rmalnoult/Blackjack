@@ -13,16 +13,13 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 use LasVenturas\BlackjackBundle\Entity\User;
 
-
-use LasVenturas\BlackjackBundle\Controller\DefaultController;
-
 class HomeController extends Controller
 {
 
     public function indexAction(Request $request)
     {
         // play isLoggedIn function to see if a cookie is found
-        // isLoggedIn is a service 
+        // isLoggedIn is in a service called Login control
         $LoginControlService = $this->get('las_venturas_blackjack.loginControl');
 
         if ($LoginControlService->isLoggedIn($request)) {

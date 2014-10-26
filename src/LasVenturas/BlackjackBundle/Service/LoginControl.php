@@ -9,7 +9,6 @@ use LasVenturas\BlackjackBundle\Entity\User;
 
 class LoginControl {
 
-
     public function isLoggedIn(Request $request)
     {
 
@@ -28,9 +27,11 @@ class LoginControl {
         }              
     }
 
-
-
-
+    public function whoIsThisUser($request) {
+        //get the name associated with the cookie
+        $cookieName = $request->cookies->get('blackJackPlayer');
+        return $cookieName;    	
+    }
 
 
 }
