@@ -36,6 +36,7 @@ class Round
 
 
     protected $deck = array(
+        0,
         array( 'card' => 'Ace', 'color' => 'spades', 'value' => 11),
         array( 'card' => '2', 'color' => 'spades', 'value' => 2),
         array( 'card' => '3', 'color' => 'spades', 'value' => 3),

@@ -22,12 +22,12 @@ class Revealedcards
     private $id;
 
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="decimal", scale=0)
      */
     private $roundId;
     
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="decimal", scale=0)
      */
     private $cardId;
 
@@ -65,18 +65,7 @@ class Revealedcards
         return $this->cardId;
     }
 
-    /**
-     * Set roundId
-     *
-     * @param \LasVenturas\BlackjackBundle\Entity\Round $roundId
-     * @return Revealedcards
-     */
-    public function setRoundId(\LasVenturas\BlackjackBundle\Entity\Round $roundId = null)
-    {
-        $this->roundId = $roundId;
 
-        return $this;
-    }
 
     /**
      * Get roundId
@@ -86,5 +75,18 @@ class Revealedcards
     public function getRoundId()
     {
         return $this->roundId;
+    }
+
+    /**
+     * Set roundId
+     *
+     * @param string $roundId
+     * @return Revealedcards
+     */
+    public function setRoundId($roundId)
+    {
+        $this->roundId = $roundId;
+
+        return $this;
     }
 }

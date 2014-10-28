@@ -70,7 +70,7 @@ class GameController extends Controller
 
             
             // flush to update the changes permanently in the database
-            // $em->persist($round);
+            $em->persist($round);
             $em->persist($user);
             $em->flush();
 
@@ -121,10 +121,9 @@ class GameController extends Controller
 		$revealedCard = new Revealedcards();
 		$revealedCard->setCardId($cardId);
 		$revealedCard->setRoundId($roundId);
-		$revcardId = $revealedCard->getCardId();
-		// $em = $this->getDoctrine()->getManager();		
-		// $em->persist($revealedCard);
-		// $em->flush();
+		$em = $this->getDoctrine()->getManager();		
+		$em->persist($revealedCard);
+		$em->flush();
 		var_dump('card stored id : '.$revcardId);
 
 		// setRoundId($roundId)

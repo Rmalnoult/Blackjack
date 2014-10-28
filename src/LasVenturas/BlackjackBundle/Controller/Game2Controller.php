@@ -27,17 +27,6 @@ class GameController extends Controller
             return $LoginControlService->redirectToHome();
         }
     }
-    public function beginRound()
-    {
-    	
-        // initialise le deck, 
-        $deck = $round->getDeck();
-        var_dump('deck: '.$deck['15']['card'].' of '.$deck['15']['color']);
-        var_dump('deck initialized');
-        die;
-		// get a random card
-    	// render the view + links : hit me / that's ok
-    }
 
     public function hitMeAction()
     {
