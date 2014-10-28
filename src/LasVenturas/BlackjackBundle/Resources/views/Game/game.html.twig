@@ -1,0 +1,28 @@
+{% extends "LasVenturasBlackjackBundle::layout.html.twig" %}
+
+
+
+
+
+{% block content %}
+
+<div class="card playerCards">
+	<h3>Your cards</h3>
+		<ul>
+			{% for playerCard in playerCards %}
+			    <li>{{ playerCard.card }} of {{playerCard.color}}</li>
+			{% endfor %}
+		</ul>
+</div>
+<div class="card score">
+	<h3>Your score</h3>
+</div>
+<div class="card action">
+	<a href="#">Hit me !</a>
+	<a href="#">I'm ok, finish !</a>
+</div>
+
+
+</div>
+
+{% endblock %}
