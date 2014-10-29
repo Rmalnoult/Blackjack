@@ -90,16 +90,29 @@ class GameController extends Controller
 	        var_dump('playerCards: '.$playerCards[0]['card'].' of '.$playerCards[0]['color'].' value = '.$playerCards[0]['value']);
 	        var_dump('playerCards: '.$playerCards[1]['card'].' of '.$playerCards[1]['color'].' value = '.$playerCards[1]['value']);
 
-	        if ($playerScore >= 21){
-	        	$this->playerWins();
-	        	return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig');
+	        if ($playerScore > 21){
+	        	$this->playerBurns();
+	        	return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig',array(
+	        		'playerCards' => $playerCards,
+	        		'playerScore' => $playerScore
+	        	));
+	        } else {
+	        	if($playerScore == 21) {
+	        		$this->playerWins($roundId, $userName);
+	        		return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig',array(
+	        			'playerCards' => $playerCards,
+	        			'playerScore' => $playerScore
+	        		));
+	        	} else {
+
+			        return $this->render('LasVenturasBlackjackBundle:Game:game.html.twig', array(
+			        	'playerCards' =>  $playerCards,
+			        	'name' => $userName,
+			        	'playerScore' => $playerScore,
+			        	'roundId' => $roundId
+			        )); 
+	        	}
 	        }
-	        return $this->render('LasVenturasBlackjackBundle:Game:game.html.twig', array(
-	        	'playerCards' =>  $playerCards,
-	        	'name' => $userName,
-	        	'playerScore' => $playerScore,
-	        	'roundId' => $roundId
-	        )); 
         }
 
         // var_dump('Playa : '.$userName);   
@@ -211,6 +224,16 @@ class GameController extends Controller
 		} 
 		else {  
 			if ($playerScore > 21) {
+				if ($this->hasAnAce($playerCards)){
+					$this->changeAceValueTo1($playerCards);
+					$playerScore = $this->getPlayerScore($playerCards);
+					return $this->render('LasVenturasBlackjackBundle:Game:game.html.twig', array(
+						'playerCards' =>  $playerCards,
+						'name' => $userName,
+						'playerScore' => $playerScore,
+						'roundId' => $roundId
+					)); 	
+				}
 				$this->playerBurns();
 				return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', array(
 					'playerCards' =>  $playerCards,
@@ -228,15 +251,142 @@ class GameController extends Controller
 			'roundId' => $roundId
 		)); 			
 	}
-	public function playerWins()
+	public function finishAction($userName, $roundId, $playerScore)
 	{
-		var_dump('bi-winning');
+		var_dump('finish !');
+		// var_dump('player card1'.$playerCards[0]['card'].' of '.$playerCards[0]['color']);
+		var_dump('playerscore : '.$playerScore);
+        $em = $this->getDoctrine()->getManager();
+        // get the revealcards repo 
+        $reaveledCards = $em->getRepository('LasVenturasBlackjackBundle:Revealedcards');
+        // find revealcards -> this will return an array of card ids
+        $preExistingCards = $reaveledCards->findByRoundId($roundId);
+        // get the round repo (for the deck and the score)
+        $round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
+        // get the deck of cards
+        $deck = $round->getDeck();
+        // initialize playercards array
+        $playerCards = array();
+        // foreach card id found in the database 
+        // => push the corresponding card from the deck to the playercards array
+        foreach ($preExistingCards as $preExistingCard) {
+        	$preExistingCardId = $preExistingCard->getCardId();
+        	array_push($playerCards, $deck[$preExistingCardId]);
+        }
+        // initialize bankscore
+        $bankScore = 0;
+        $bankCards = array();
+        while ($bankScore <= 17) {
+	         // generate a new random card
+	        $newCard = $this->getRandomCard($deck, $roundId);
+	        var_dump('new bank card: '.$newCard['card'].' of '.$newCard['color']);
+	        // push it in the bankcards array
+	        array_push($bankCards, $newCard);
+	        // calculate score of the cards
+	        $bankScore = $this->getPlayerScore($bankCards);       	
+        }
+
+	    var_dump('Bankscore : '.$bankScore);
+
+		if ($bankScore > 21){
+			$this->playerWins($roundId, $userName);
+			return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig', array(
+				'playerCards' =>  $playerCards,
+				'name' => $userName,
+				'playerScore' => $playerScore,
+				'roundId' => $roundId
+			));
+		} else {
+			if ($bankScore > $playerScore){
+				var_dump('bank wins because fuck you');
+				$this->playerBurns();
+				return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', array(
+					'playerCards' =>  $playerCards,
+					'name' => $userName,
+					'playerScore' => $playerScore,
+					'roundId' => $roundId
+				));
+			} else {
+				if ($bankScore == $playerScore) {
+					$this->tie($roundId, $userName);
+					return $this->render('LasVenturasBlackjackBundle:Game:tie.html.twig', array(
+						'playerCards' =>  $playerCards,
+						'name' => $userName,
+						'playerScore' => $playerScore,
+						'roundId' => $roundId
+					));				
+				} else {
+					if ($bankScore < $playerScore) {
+						$this->playerWins($roundId, $userName);
+						return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig', array(
+							'playerCards' =>  $playerCards,
+							'name' => $userName,
+							'playerScore' => $playerScore,
+							'roundId' => $roundId
+					));				
+					}
+				}
+			}
+		}	
+	}
+	public function playerWins($roundId, $userName)
+	{
+		var_dump('player wins');
+		// double the initial bet and add it to its score
+		$em = $this->getDoctrine()->getManager();
+		$round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
+		$roundBet = $round->getBet();
+		
+		$user = $em->getRepository('LasVenturasBlackjackBundle:User')->findOneByName($userName);
+		$userWallet = $user->getWallet();
+
+		$userWallet = $userWallet + $roundBet + $roundBet;
+		$user->setWallet($userWallet);
+
+		//flush
+		$em->persist($user);
+		$em->flush();
 		return false;
 	}
 	public function playerBurns()
 	{
 		var_dump('burning');
 		return false;
+	}
+	public function tie($roundId, $userName)
+	{
+		var_dump('tie');
+		// get the ititial bet and give it back to the user
+		$em = $this->getDoctrine()->getManager();
+		$round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
+		$roundBet = $round->getBet();
+		
+		$user = $em->getRepository('LasVenturasBlackjackBundle:User')->findOneByName($userName);
+		$userWallet = $user->getWallet();
+
+		$userWallet = $userWallet + $roundBet;
+		$user->setWallet($userWallet);
+
+		//flush
+		$em->persist($user);
+		$em->flush();
+		return false;
+	}
+	public function hasAnAce($cards)
+	{
+		foreach ($cards as $card){
+			if ($card['card'] == 'Ace'){
+				return true;
+				var_dump('ace found');
+			}
+		}
+		return false;
+	}
+	public function changeAceValueTo1($cards)
+	{
+		
+		// x = indexof($card['Ace']
+		var_dump('changing ace value to 1');
 	}
 
 
