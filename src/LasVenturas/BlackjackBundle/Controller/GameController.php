@@ -66,6 +66,9 @@ class GameController extends Controller
             // store the userid in the round object
             $userId = $user->getId();
             $round->setUser($userId);
+            // initialise le score du round
+            $round->setPlayerScore(0);
+            $score = 0;
 
             
             // flush to update the changes permanently in the database
@@ -78,18 +81,24 @@ class GameController extends Controller
 	        $roundId = $round->getId();
 	        // var_dump('roundId: '.$roundId);
 	        $userName = $user->getName();
-	        $score = 0;
 	        $card1 = $this->getRandomCard($deck, $roundId);
 	        $playerCards = array($card1);
 	        $card2 = $this->getRandomCard($deck, $roundId);
 	        array_push($playerCards, $card2);
+	        $playerScore = $this->getPlayerScore($playerCards);
 
-	        var_dump('playerCards: '.$playerCards[0]['card'].' of '.$playerCards[0]['color']);
-	        var_dump('playerCards: '.$playerCards[1]['card'].' of '.$playerCards[1]['color']);
+	        var_dump('playerCards: '.$playerCards[0]['card'].' of '.$playerCards[0]['color'].' value = '.$playerCards[0]['value']);
+	        var_dump('playerCards: '.$playerCards[1]['card'].' of '.$playerCards[1]['color'].' value = '.$playerCards[1]['value']);
 
+	        if ($playerScore >= 21){
+	        	$this->playerWins();
+	        	return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig');
+	        }
 	        return $this->render('LasVenturasBlackjackBundle:Game:game.html.twig', array(
 	        	'playerCards' =>  $playerCards,
-	        	'name' => $userName
+	        	'name' => $userName,
+	        	'playerScore' => $playerScore,
+	        	'roundId' => $roundId
 	        )); 
         }
 
@@ -126,9 +135,8 @@ class GameController extends Controller
         $preExistingCard = $repository->findOneBy(array('roundId' => $roundId, 'cardId' => $cardId));
         if ($preExistingCard) {
         	return true;
-        	var_dump('pre existing card: '. 'true');
+        	var_dump('card invalid : was already drawn');
         }
-    	var_dump('pre existing card: '. 'false');
     	return false;
 	}
 	public function storeRevealedCard($roundId, $cardId)
@@ -137,15 +145,100 @@ class GameController extends Controller
 		$revealedCard = new Revealedcards();
 		$revealedCard->setCardId($cardId);
 		$revealedCard->setRoundId($roundId);
+		// store revealed card in db
 		$em = $this->getDoctrine()->getManager();		
 		$em->persist($revealedCard);
 		$em->flush();
 
-		// setRoundId($roundId)
-		
+	}
+	public function getPlayerScore($playerCards)
+	{
+		$score = 0;
+		// Add up all player cards value to get the score
+		foreach ($playerCards as $playerCard) {
+			$score = $score + $playerCard['value'];
+		}
+		return $score;
+	}
 
-		// setCardId
+	public function hitMeAction($userName, $roundId, $playerScore)
+	{
+		var_dump('hit me !');
+		// var_dump('player card1'.$playerCards[0]['card'].' of '.$playerCards[0]['color']);
+		var_dump('score : '.$playerScore);
+        $em = $this->getDoctrine()->getManager();
+        // get the revealcards repo 
+        $reaveledCards = $em->getRepository('LasVenturasBlackjackBundle:Revealedcards');
+        // find revealcards -> this will return an array of card ids
+        $preExistingCards = $reaveledCards->findByRoundId($roundId);
+        // get the round repo (for the deck and the score)
+        $round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
+        // get the deck of cards
+        $deck = $round->getDeck();
+        // initialize playercards array
+        $playerCards = array();
+        // foreach card id found in the already revealed cards 
+        // => push the corresponding card from the deck in the playercards arrayt
+        foreach ($preExistingCards as $preExistingCard) {
+        	$preExistingCardId = $preExistingCard->getCardId();
+        	array_push($playerCards, $deck[$preExistingCardId]);
+        }
+        // generate a new random card
+        $newCard = $this->getRandomCard($deck, $roundId);
+        // push it in the playercards array
+        array_push($playerCards, $newCard);
+        // calculate playerScore based with the new card 
+        $playerScore = $this->getPlayerScore($playerCards);
+        // save it in the Round object
+       	$round->setPlayerScore($playerScore);
+        // flush to update the changes permanently in the database
+        $em->persist($round);
+        $em->flush();
+
+	    foreach ($playerCards as $playerCard) {
+	    	var_dump('player card'.$playerCard['card'].' of '.$playerCard['color']);
+	    }
+	    var_dump('score : '.$playerScore);
+
+		if ($playerScore == 21){
+			$this->playerWins();
+			return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig', array(
+				'playerCards' =>  $playerCards,
+				'name' => $userName,
+				'playerScore' => $playerScore,
+				'roundId' => $roundId
+			));
+		} 
+		else {  
+			if ($playerScore > 21) {
+				$this->playerBurns();
+				return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', array(
+					'playerCards' =>  $playerCards,
+					'name' => $userName,
+					'playerScore' => $playerScore,
+					'roundId' => $roundId
+				));
+			}
+		}
+		
+		return $this->render('LasVenturasBlackjackBundle:Game:game.html.twig', array(
+			'playerCards' =>  $playerCards,
+			'name' => $userName,
+			'playerScore' => $playerScore,
+			'roundId' => $roundId
+		)); 			
+	}
+	public function playerWins()
+	{
+		var_dump('bi-winning');
+		return false;
+	}
+	public function playerBurns()
+	{
+		var_dump('burning');
+		return false;
 	}
 
 
-}
+
+	}

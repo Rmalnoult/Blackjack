@@ -30,6 +30,10 @@ class Round
     protected $bet;
 
     /**
+     * @ORM\Column(type="decimal", scale=2)
+     */
+    protected $playerScore;
+    /**
      * @ORM\Column(type="decimal")
      */
     protected $user;
@@ -162,5 +166,28 @@ class Round
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * Set playerScore
+     *
+     * @param string $playerScore
+     * @return Round
+     */
+    public function setPlayerScore($playerScore)
+    {
+        $this->playerScore = $playerScore;
+
+        return $this;
+    }
+
+    /**
+     * Get playerScore
+     *
+     * @return string 
+     */
+    public function getPlayerScore()
+    {
+        return $this->playerScore;
     }
 }

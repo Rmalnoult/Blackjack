@@ -76,4 +76,17 @@ class Revealedcards
     {
         return $this->roundId;
     }
+
+    /**
+     * Set roundId
+     *
+     * @param string $roundId
+     * @return Revealedcards
+     */
+    public function setRoundId($roundId)
+    {
+        $this->roundId = $roundId;
+
+        return $this;
+    }
 }
