@@ -16,6 +16,13 @@
             <div id="header">
                 {% block header %}
                     <h1>BJ is for Blackjack</h1>
+                    <nav>
+                        <ul>
+                            <li><a href="{{ path('las_venturas_blackjack_homepage') }}">Home</a></li>
+                            <li><a href="{{ path('las_venturas_blackjack_game') }}">Play</a></li>
+                            <li><a href="{{ path('las_venturas_blackjack_stats') }}">Stats</a></li>
+                        </ul>
+                    </nav>
                 
                 {% endblock %}
             </div>

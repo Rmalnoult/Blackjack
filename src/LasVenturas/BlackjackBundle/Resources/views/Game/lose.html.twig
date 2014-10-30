@@ -7,8 +7,12 @@
 {% block content %}
 
 <div class="card lose">
-	<h1>You Lose</h1>
+	<h1>You lose</h1>
 	<a href="{{ path('las_venturas_blackjack_game')}}">Play again Motherfucker</a>
+</div>
+<div class="card score">
+	<h3>Your score</h3>
+	<h2>{{playerScore}}</h2>
 </div>
 <div class="card playerCards">
 	<h3>Your cards</h3>
@@ -18,10 +22,15 @@
 			{% endfor %}
 		</ul>
 </div>
-<div class="card score">
-	<h3>Your score</h3>
-	<h2>{{playerScore}}</h2>
+<div class="card bankCards">
+	<h3>Bank's cards</h3>
+		<ul>
+			{% for bankCard in bankCards %}
+			    <li class="{{ bankCard.card }} {{bankCard.color}}">{{ bankCard.card }} of {{bankCard.color}}</li>
+			{% endfor %}
+		</ul>
 </div>
+
 
 
 </div>

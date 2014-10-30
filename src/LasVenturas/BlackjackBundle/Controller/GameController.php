@@ -227,7 +227,7 @@ class GameController extends Controller
 				if ($this->hasAnAce($playerCards)){
 					$this->changeAceValueTo1($playerCards);
 					$playerScore = $this->getPlayerScore($playerCards);
-					return $this->render('LasVenturasBlackjackBundle:Game:game.html.twig', array(
+					return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', array(
 						'playerCards' =>  $playerCards,
 						'name' => $userName,
 						'playerScore' => $playerScore,
@@ -243,7 +243,7 @@ class GameController extends Controller
 				));
 			}
 		}
-		
+		// if none of the above condition is respected => render the game with the new parameters
 		return $this->render('LasVenturasBlackjackBundle:Game:game.html.twig', array(
 			'playerCards' =>  $playerCards,
 			'name' => $userName,
@@ -253,7 +253,6 @@ class GameController extends Controller
 	}
 	public function finishAction($userName, $roundId, $playerScore)
 	{
-		var_dump('finish !');
 		// var_dump('player card1'.$playerCards[0]['card'].' of '.$playerCards[0]['color']);
 		var_dump('playerscore : '.$playerScore);
         $em = $this->getDoctrine()->getManager();
@@ -292,6 +291,8 @@ class GameController extends Controller
 			$this->playerWins($roundId, $userName);
 			return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig', array(
 				'playerCards' =>  $playerCards,
+				'bankScore' => $bankScore,
+				'bankCards' => $bankCards,
 				'name' => $userName,
 				'playerScore' => $playerScore,
 				'roundId' => $roundId
@@ -302,6 +303,8 @@ class GameController extends Controller
 				$this->playerBurns();
 				return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', array(
 					'playerCards' =>  $playerCards,
+					'bankScore' => $bankScore,
+					'bankCards' => $bankCards,
 					'name' => $userName,
 					'playerScore' => $playerScore,
 					'roundId' => $roundId
@@ -311,6 +314,8 @@ class GameController extends Controller
 					$this->tie($roundId, $userName);
 					return $this->render('LasVenturasBlackjackBundle:Game:tie.html.twig', array(
 						'playerCards' =>  $playerCards,
+						'bankScore' => $bankScore,
+						'bankCards' => $bankCards,
 						'name' => $userName,
 						'playerScore' => $playerScore,
 						'roundId' => $roundId
@@ -320,6 +325,8 @@ class GameController extends Controller
 						$this->playerWins($roundId, $userName);
 						return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig', array(
 							'playerCards' =>  $playerCards,
+							'bankScore' => $bankScore,
+							'bankCards' => $bankCards,
 							'name' => $userName,
 							'playerScore' => $playerScore,
 							'roundId' => $roundId
@@ -376,8 +383,8 @@ class GameController extends Controller
 	{
 		foreach ($cards as $card){
 			if ($card['card'] == 'Ace'){
-				return true;
 				var_dump('ace found');
+				return true;
 			}
 		}
 		return false;
