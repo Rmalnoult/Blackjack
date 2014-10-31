@@ -1,46 +1,12 @@
-{% extends "LasVenturasBlackjackBundle::layout.html.twig" %}
+{% extends "LasVenturasBlackjackBundle:Game:result.html.twig" %}
 
 
 
 
 
-{% block content %}
-
-<div class="card tie">
-	<h1>You tie</h1>
-	<a href="{{ path('las_venturas_blackjack_game')}}">Play again Motherfucker</a>
-</div>
-<div class="card score">
-	<div class="playerScore">
-		<h3>Your score</h3>
-		<h2>{{playerScore}}</h2>
+{% block score %}
+	<div class="card tie">
+		<h1>You tie</h1>
+		<a href="{{ path('las_venturas_blackjack_game')}}">Play again Motherfucker</a>
 	</div>
-	<div class="bankScore">
-		<h3>Bank's score</h3>
-		<h2>{{bankScore}}</h2>
-	</div>
-</div>
-<div class="card playerCards">
-	<h3>Your cards</h3>
-		<ul>
-			{% for playerCard in playerCards %}
-			    <li class="{{ playerCard.card }} {{playerCard.color}}">{{ playerCard.card }} of {{playerCard.color}}</li>
-			{% endfor %}
-		</ul>
-</div>
-<!-- if bankcards exists -->
-<div class="card bankCards">
-	<h3>Bank's cards</h3>
-		<ul>
-			{% for bankCard in bankCards %}
-			    <li class="{{ bankCard.card }} {{bankCard.color}}">{{ bankCard.card }} of {{bankCard.color}}</li>
-			{% endfor %}
-		</ul>
-</div>
-<!-- endif bankcards exists -->
-
-
-
-</div>
-
 {% endblock %}

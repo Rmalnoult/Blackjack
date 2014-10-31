@@ -1,0 +1,46 @@
+{% extends "LasVenturasBlackjackBundle::layout.html.twig" %}
+
+
+
+
+
+{% block content %}
+	{% block score %}
+	{% endblock %}
+
+<div class="card score">
+	<div class="playerScore">
+		<h3>Your score</h3>
+		<h2>{{playerScore}}</h2>
+	</div>
+	{% if bankScore is defined %}
+		<div class="bankScore">
+			<h3>Bank's score</h3>
+			<h2>{{bankScore}}</h2>
+		</div>
+	{% endif %}
+</div>
+<div class="card playerCards">
+	<h3>Your cards</h3>
+		<ul>
+			{% for playerCard in playerCards %}
+			    <li class="{{ playerCard.card }} {{playerCard.color}}">{{ playerCard.card }} of {{playerCard.color}}</li>
+			{% endfor %}
+		</ul>
+</div>
+{% if bankCards is defined %}
+	<div class="card bankCards">
+		<h3>Bank's cards</h3>
+			<ul>
+				{% for bankCard in bankCards %}
+				    <li class="{{ bankCard.card }} {{bankCard.color}}">{{ bankCard.card }} of {{bankCard.color}}</li>
+				{% endfor %}
+			</ul>
+	</div>
+{% endif %}
+
+
+
+</div>
+
+{% endblock %}

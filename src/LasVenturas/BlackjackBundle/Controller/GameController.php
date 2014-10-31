@@ -138,6 +138,7 @@ class GameController extends Controller
 		}
 		$card = $deck[$cardId];
 		$this->storeRevealedCard($roundId, $cardId);
+		
 		return $card;
 
 	}
