@@ -37,7 +37,11 @@ class Round
      * @ORM\Column(type="decimal")
      */
     protected $user;
-
+    /**
+     * @Assert\NotBlank()
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $winner;
 
     protected $deck = array(
         0,
@@ -166,5 +170,28 @@ class Round
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * Set playerScore
+     *
+     * @param string $playerScore
+     * @return Round
+     */
+    public function setPlayerScore($playerScore)
+    {
+        $this->playerScore = $playerScore;
+
+        return $this;
+    }
+
+    /**
+     * Get playerScore
+     *
+     * @return string 
+     */
+    public function getPlayerScore()
+    {
+        return $this->playerScore;
     }
 }
