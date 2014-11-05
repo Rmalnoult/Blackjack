@@ -19,16 +19,16 @@ class StatsController extends Controller
         if ($LoginControlService->isLoggedIn($request)) {
             // var_dump('loggedIn');
             $userName = $LoginControlService->whoIsThisUser($request);
-            return $this->showUserStats($userName);
+            return $this->showUserStatsAction($userName);
         } else {
             // var_dump('not loggedIn');
             return $LoginControlService->redirectToHome();
         }
     }
-    public function showUserStats($userName)
+    public function showUserStatsAction($userName)
     {
 
-    	var_dump('stats of '.$userName);
+    	// var_dump('stats of '.$userName);
         $roundRepository = $this->getDoctrine()
             ->getRepository('LasVenturasBlackjackBundle:Round');
         $userRepository = $this->getDoctrine()
@@ -50,23 +50,34 @@ class StatsController extends Controller
         // get the number of tied games
         $roundsTied = $this->getRoundsTied($roundRepository, $userId);
 
+        // get top players (ordered by credit)
+        $topPlayers = $this->getTopPlayers($userRepository);
 
 
-    	die;
+        $variablesToRender = array(
+                'roundsWon' =>  $roundsWon,
+                'roundsTied' => $roundsTied,
+                'roundsLost' => $roundsLost,
+                'roundsPlayed' => $roundsPlayed,
+                'userName' => $userName,
+                'topPlayers' => $topPlayers,
+                );
+
+        return $this->render('LasVenturasBlackjackBundle:Stats:stats.html.twig', $variablesToRender);
     	
     }
     public function getRoundsWon($roundRepository, $userName)
     {
         $roundsWon = $roundRepository->findByWinner($userName);
         $roundsWon = count($roundsWon);
-        var_dump('rounds won : '.$roundsWon);
+        // var_dump('rounds won : '.$roundsWon);
         return $roundsWon;
     }
     public function getRoundsPlayed($roundRepository, $userId)
     {
         $roundsPlayed = $roundRepository->findByUser($userId);
         $roundsPlayed = count($roundsPlayed);
-        var_dump('rounds played : '.$roundsPlayed);
+        // var_dump('rounds played : '.$roundsPlayed);
         return $roundsPlayed;
     }
     public function getRoundsLost($roundRepository, $userId)
@@ -80,7 +91,7 @@ class StatsController extends Controller
 
         $roundsLost = $query->getResult();
         $roundsLost = count($roundsLost);
-        var_dump('rounds lost : '.$roundsLost);
+        // var_dump('rounds lost : '.$roundsLost);
         return $roundsLost;
     }
     public function getRoundsTied($roundRepository, $userId)
@@ -94,8 +105,14 @@ class StatsController extends Controller
         $roundsTied = $query->getResult();
         
         $roundsTied = count($roundsTied);
-        var_dump('rounds tied : '.$roundsTied);
+        // var_dump('rounds tied : '.$roundsTied);
         return $roundsTied;
+    }
+    public function getTopPlayers($userRepository)
+    {
+        $topPlayers = $userRepository->findBy(array(), array('wallet' => 'DESC'),5);
+        // echo '<pre>'; print_r($topPlayers); echo '</pre>';  
+        return $topPlayers; 
     }
 
 }

@@ -5,8 +5,27 @@
 
 
 {% block content %}
-<div class="card topPlayers">
-	
+<div class="card user">
+	<h2>User</h2>
+	<h3>{{userName}}</h3>
 </div>
-
+<div class="card rounds">
+	<h2>Rounds Played</h2>
+	<ul>
+		<li>Total rounds played : {{roundsPlayed}}</li>
+		<li>Total rounds won : {{roundsWon}}</li>
+		<li>Total rounds lost : {{roundsLost}}</li>
+		<li>Total rounds tied : {{roundsTied}}</li>
+	</ul>
+</div>
+<div class=" card topPlayers">
+	<h2>Top Players</h2>
+	<ul>
+		{% for topPlayer in topPlayers %}
+		    <a href="{{ path('las_venturas_blackjack_userProfile', {'userName' : topPlayer.name}) }}">
+		    	<li class="{{ topPlayer.name }}">{{ topPlayer.name }} : ${{topPlayer.wallet}}</li>
+		    </a>
+		{% endfor %}
+	</ul>
+</div>
 {% endblock %}

@@ -1,0 +1,153 @@
+body {
+	font-style: 'Roboto', sans-serif;
+	margin: 0;
+	padding: 0;
+}
+a:hover {
+	cursor: url(http://www.rw-designer.com/cursor-extern.php?id=39702);
+}
+#content {
+	width: 100%;
+}
+.clear {
+	clear: both;
+}
+#header {
+	width: 100%;
+	height: 130px;
+	background-color: #3F51B5;
+
+}
+#container {
+	width: 100%;
+	position: relative;
+	/*padding: 0 30px 50px;*/
+	background-color: #f5f5f5;
+	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.26);
+	-moz-box-shadow: 0 2px 5px rgba(0,0,0,.26);
+	box-shadow: 0 2px 5px rgba(0,0,0,.26);
+	overflow: visible;
+}
+#header h1 {
+	color: #fff;
+	padding: 30px;
+	margin: 0;
+}
+.card {
+	width: auto;
+	padding: 40px;
+	background-color: #fff;
+	float: left;
+	margin-left: 30px;
+	margin-bottom: 30px;
+	position: relative;
+	top: -25px;
+	text-align: center;
+	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.26);
+	-moz-box-shadow: 0 2px 5px rgba(0,0,0,.26);
+	box-shadow: 0 2px 5px rgba(0,0,0,.26);
+}
+.card a {
+	text-decoration: none;
+	color: #fff;
+	background-color: #F44336;
+	padding: 20px;
+	display: block;
+	margin-bottom: 15px;
+}
+ul {
+	padding: 0;
+	margin: 0;
+}
+.card.welcome, .card.signup {
+	width: 500px;
+	margin: 0 auto;
+	float: none;
+}
+.card.signup {
+	width: 350px;
+}
+.card.welcome p, label {
+	font-size: 16px;
+
+}
+.card.welcome p strong {
+	font-size: 25px;
+	font-weight: bold;
+}
+
+input {
+	padding: 10px;
+	display: block;
+	width: 215px;
+}
+button {
+	text-decoration: none;
+	color: #fff;
+	background-color: #F44336;
+	padding: 10px;
+	float: right;
+	display: block;	
+	position: relative;
+	top: -40px;
+	border: none;
+}
+.playerCards li, .bankCards li {
+	float: left;
+	height: 150px;
+	width: 90px;
+	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.26);
+	-moz-box-shadow: 0 2px 5px rgba(0,0,0,.26);
+	box-shadow: 0 2px 5px rgba(0,0,0,.26);
+   	background-size: 25px;
+	background-repeat: no-repeat;
+	background-position: 7px 27px;
+	list-style-type: none;
+	text-align: left;
+	font-size: 23px;
+	padding-left: 12px;
+}
+.playerCards li + li, .bankCards li + li {
+	margin-left: 20px;
+
+}
+.playerCards li.heart, .bankCards li.heart{
+	/*background-color: red;*/
+	background-image: url('http://www.sessionsgroup.com/blog/wp-content/uploads/2010/02/valentines_simple_heart.gif');
+}
+.playerCards li.diamonds, .bankCards li.diamonds{
+	background-image: url('http://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=7125059');
+}
+.playerCards li.spades, .bankCards li.spades{
+	background-image: url('http://cdn-6.freeclipartnow.com/d/36618-1/card-icon-spade.jpg');
+}
+.playerCards li.clubs, .bankCards li.clubs{
+	background-image: url('http://people.rit.edu/mhl4426/320/project3/images/logo.jpg');
+}
+
+nav ul {
+	float: right;
+	margin-right: 50px;
+	position: relative;
+	top: -44px;
+}
+nav ul li {
+	display: inline-block;
+	margin-left: 30px;
+
+}
+nav ul li a {
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 16px;
+	color: #fff;
+	text-decoration: none;
+}
+.rounds.card ul, .topPlayers.card ul li {
+	margin: 0;
+	padding: 0;
+}
+.rounds.card ul li, .topPlayers.card ul li {
+	text-align: left;
+	list-style-type: none;
+}

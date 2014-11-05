@@ -23,10 +23,10 @@ class HomeController extends Controller
         $LoginControlService = $this->get('las_venturas_blackjack.loginControl');
 
         if ($LoginControlService->isLoggedIn($request)) {
-            var_dump('loggedIn');
+            // var_dump('loggedIn');
             return $this->login($request);
         } else {
-            var_dump('not loggedIn');
+            // var_dump('not loggedIn');
             return $this->signup($request);
         }
     }
@@ -38,8 +38,8 @@ class HomeController extends Controller
 
 
         $request = $this->getRequest();
-        var_dump('cookie found');
-        var_dump('dat cookie: '.$request->cookies->get('blackJackPlayer'));
+        // var_dump('cookie found');
+        // var_dump('dat cookie: '.$request->cookies->get('blackJackPlayer'));
 
 
         //get the name associated with the cookie
@@ -52,7 +52,7 @@ class HomeController extends Controller
         $user = $repository->findOneByName($cookieName);
         // store the username in a variable
         $userName = $user->getName();
-        var_dump('userName: '.$userName);
+        // var_dump('userName: '.$userName);
 
         if (!$user) {
             throw $this->createNotFoundException(

@@ -1,4 +1,4 @@
-/web/bundles/
+/web/bundles/acmedemo
 /app/bootstrap.php.cache
 /app/cache/*
 /app/config/parameters.yml

@@ -18,6 +18,10 @@ las_venturas_blackjack_stats:
     path:     /stats
     defaults: { _controller: LasVenturasBlackjackBundle:Stats:index }
 
+las_venturas_blackjack_userProfile:
+    path:     /stats/{userName}
+    defaults: { _controller: LasVenturasBlackjackBundle:Stats:showUserStats }
+
 las_venturas_blackjack_user:
     path:     /user
     defaults: { _controller: LasVenturasBlackjackBundle:User:index }

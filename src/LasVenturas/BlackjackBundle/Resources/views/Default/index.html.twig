@@ -5,6 +5,10 @@
 {% block content_header '' %}
 
 {% block content %}
-	<p>Welcome {{name}}, you're one bad motherfucker, let's play $blackJack</p>
-	<a href="{{ url('las_venturas_blackjack_game') }}">PLAY Black Fucking Jack</a>
+
+<div class="card welcome">
+	<p>Welcome <strong>{{name}}</strong>,</p>
+	<p>you're one bad motherfucker, let's play BlackJack</p>
+	<a href="{{ url('las_venturas_blackjack_game') }}">PLAY Blackjack</a>
+</div>
 {% endblock %}

@@ -57,8 +57,18 @@ class GameController extends Controller
             // get the current user
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository('LasVenturasBlackjackBundle:User')->findOneByName($userName);
-            // take the bet out of his wallet
+            // get wallet
             $userWallet = $user->getWallet();
+
+            // if bet is superior to credit available : render default view
+            if ($userBet > $userWallet) {
+		        return $this->render('LasVenturasBlackjackBundle:Game:pregame.html.twig', array(
+		            'form' => $form->createView(),
+		            'name' => $userName,
+		            'credit' => $credit
+		        ));             	
+            }
+            // take the bet out of his wallet
             $userWallet = $userWallet - $userBet;
             $user->setWallet($userWallet);
             // store the userid in the round object
@@ -139,7 +149,7 @@ class GameController extends Controller
         $repository = $em->getRepository('LasVenturasBlackjackBundle:Revealedcards');
         $preExistingCard = $repository->findOneBy(array('roundId' => $roundId, 'cardId' => $cardId));
         if ($preExistingCard) {
-            var_dump('card invalid : was already drawn');
+            // var_dump('card invalid : was already drawn');
         	return true;
 
         }
@@ -199,9 +209,9 @@ class GameController extends Controller
         $em->persist($round);
         $em->flush();
 
-	    foreach ($playerCards as $playerCard) {
-	    	var_dump('player card'.$playerCard['card'].' of '.$playerCard['color']);
-	    }
+	    // foreach ($playerCards as $playerCard) {
+	    // 	var_dump('player card'.$playerCard['card'].' of '.$playerCard['color']);
+	    // }
 	    $variablesToRender = array(
                 'playerCards' =>  $playerCards,
                 'name' => $userName,
@@ -210,7 +220,7 @@ class GameController extends Controller
             );
 
 		if ($playerScore == 21){
-			$this->playerWins();
+			$this->playerWins($roundId, $userName);
 			return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig', $variablesToRender);
 		} 
 		else {  
@@ -233,7 +243,7 @@ class GameController extends Controller
 	public function finishAction($userName, $roundId, $playerScore)
 	{
 		// var_dump('player card1'.$playerCards[0]['card'].' of '.$playerCards[0]['color']);
-		var_dump('playerscore : '.$playerScore);
+		// var_dump('playerscore : '.$playerScore);
         $em = $this->getDoctrine()->getManager();
         // get the revealcards repo 
         $reaveledCards = $em->getRepository('LasVenturasBlackjackBundle:Revealedcards');
@@ -257,14 +267,14 @@ class GameController extends Controller
         while ($bankScore <= 17) {
 	         // generate a new random card
 	        $newCard = $this->getRandomCard($deck, $roundId);
-	        var_dump('new bank card: '.$newCard['card'].' of '.$newCard['color']);
+	        // var_dump('new bank card: '.$newCard['card'].' of '.$newCard['color']);
 	        // push it in the bankcards array
 	        array_push($bankCards, $newCard);
 	        // calculate score of the cards
 	        $bankScore = $this->getPlayerScore($bankCards);       	
         }
 
-	    var_dump('Bankscore : '.$bankScore);
+	    // var_dump('Bankscore : '.$bankScore);
         $variablesToRender = array(
                 'playerCards' =>  $playerCards,
                 'bankScore' => $bankScore,
@@ -280,7 +290,7 @@ class GameController extends Controller
 		} else {
 			if ($bankScore > $playerScore){
                 $this->playerLoses($roundId, $userName);
-				var_dump('bank wins because fuck you');
+				// var_dump('bank wins because fuck you');
 				return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', $variablesToRender);
 			} else {
 				if ($bankScore == $playerScore) {

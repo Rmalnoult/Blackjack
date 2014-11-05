@@ -7,10 +7,10 @@
 {% block content %}
 
 <div class="card playerCards">
-	<h3>Your cards</h3>
+	<h2>Your cards</h2>
 		<ul>
 			{% for playerCard in playerCards %}
-			    <li class="{{ playerCard.card }} {{playerCard.color}}">{{ playerCard.card }} of {{playerCard.color}}</li>
+			    <li class="{{ playerCard.card }} {{playerCard.color}}">{{ playerCard.card}}</li>
 			{% endfor %}
 		</ul>
 </div>
