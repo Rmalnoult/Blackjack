@@ -38,7 +38,6 @@ class Round
      */
     protected $user;
     /**
-     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=100)
      */
     protected $winner;
@@ -193,5 +192,28 @@ class Round
     public function getPlayerScore()
     {
         return $this->playerScore;
+    }
+
+    /**
+     * Set winner
+     *
+     * @param string $winner
+     * @return Round
+     */
+    public function setWinner($winner)
+    {
+        $this->winner = $winner;
+
+        return $this;
+    }
+
+    /**
+     * Get winner
+     *
+     * @return string 
+     */
+    public function getWinner()
+    {
+        return $this->winner;
     }
 }

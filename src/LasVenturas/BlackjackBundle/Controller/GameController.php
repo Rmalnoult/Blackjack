@@ -19,16 +19,16 @@ class GameController extends Controller
         $LoginControlService = $this->get('las_venturas_blackjack.loginControl');
 
         if ($LoginControlService->isLoggedIn($request)) {
-            var_dump('loggedIn');
+            // var_dump('loggedIn');
             $user = $LoginControlService->whoIsThisUser($request);
             return $this->initGame($user);
         } else {
-            var_dump('not loggedIn');
+            // var_dump('not loggedIn');
             return $LoginControlService->redirectToHome();
         }
     }
     public function initGame($userName) {
-        var_dump('game initializing');
+        // var_dump('game initializing');
         // initialize new round entity
         $round = new Round();
 
