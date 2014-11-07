@@ -33,12 +33,6 @@ class User
      */
     protected $wallet;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Round", inversedBy="user")
-     * @ORM\JoinColumn(name="games_id", referencedColumnName="id")
-     */
-    protected $games;
-
 
     /**
      * Get id
@@ -94,28 +88,5 @@ class User
     public function getWallet()
     {
         return $this->wallet;
-    }
-
-    /**
-     * Set games
-     *
-     * @param \LasVenturas\BlackjackBundle\Entity\Games $games
-     * @return User
-     */
-    public function setGames(\LasVenturas\BlackjackBundle\Entity\Games $games = null)
-    {
-        $this->games = $games;
-
-        return $this;
-    }
-
-    /**
-     * Get games
-     *
-     * @return \LasVenturas\BlackjackBundle\Entity\Games 
-     */
-    public function getGames()
-    {
-        return $this->games;
     }
 }

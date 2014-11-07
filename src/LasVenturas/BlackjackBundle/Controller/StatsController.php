@@ -5,6 +5,7 @@ namespace LasVenturas\BlackjackBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use LasVenturas\BlackjackBundle\Entity\Round;
+use LasVenturas\BlackjackBundle\Entity\RoundRepository;
 use LasVenturas\BlackjackBundle\Entity\User;
 
 
@@ -31,29 +32,30 @@ class StatsController extends Controller
     	// var_dump('stats of '.$userName);
         $roundRepository = $this->getDoctrine()
             ->getRepository('LasVenturasBlackjackBundle:Round');
+
         $userRepository = $this->getDoctrine()
             ->getRepository('LasVenturasBlackjackBundle:User');
+            
         $user = $userRepository->findOneByName($userName);
         $userId = $user->getId();
 
     	// get the number of round won
-        $roundsWon = $this->getRoundsWon($roundRepository, $userName);
+        $roundsWon = $roundRepository->getRoundsWon($userName);
 
         // get the number of rounds played
-        $roundsPlayed = $this->getRoundsPlayed($roundRepository, $userId);
-
+        $roundsPlayed = $roundRepository->getRoundsPlayed($userId);
 
     	// get the number of rounds lost
-        $roundsLost = $this->getRoundsLost($roundRepository, $userId);
+        $roundsLost = $roundRepository->getRoundsLost($userId);
         // echo '<pre>'; print_r($roundsLost); echo '</pre>';
 
         // get the number of tied games
-        $roundsTied = $this->getRoundsTied($roundRepository, $userId);
+        $roundsTied = $roundRepository->getRoundsTied($userId);
 
-        // get top players (ordered by credit)
-        $topPlayers = $this->getTopPlayers($userRepository);
+        // get top players (array ordered by credit)
+        $topPlayers = $userRepository->getTopPlayers();
 
-
+        // define an array with variables to render
         $variablesToRender = array(
                 'roundsWon' =>  $roundsWon,
                 'roundsTied' => $roundsTied,
@@ -62,57 +64,8 @@ class StatsController extends Controller
                 'userName' => $userName,
                 'topPlayers' => $topPlayers,
                 );
-
+        // render stats view
         return $this->render('LasVenturasBlackjackBundle:Stats:stats.html.twig', $variablesToRender);
     	
     }
-    public function getRoundsWon($roundRepository, $userName)
-    {
-        $roundsWon = $roundRepository->findByWinner($userName);
-        $roundsWon = count($roundsWon);
-        // var_dump('rounds won : '.$roundsWon);
-        return $roundsWon;
-    }
-    public function getRoundsPlayed($roundRepository, $userId)
-    {
-        $roundsPlayed = $roundRepository->findByUser($userId);
-        $roundsPlayed = count($roundsPlayed);
-        // var_dump('rounds played : '.$roundsPlayed);
-        return $roundsPlayed;
-    }
-    public function getRoundsLost($roundRepository, $userId)
-    {
-        // ORM request : find by user + find by winner => bank
-        $query = $roundRepository->createQueryBuilder('p')
-            ->where('p.winner = :winner')
-            ->andWhere('p.user = :user')
-            ->setParameters(['winner' => 'bank', 'user' => $userId])
-            ->getQuery();
-
-        $roundsLost = $query->getResult();
-        $roundsLost = count($roundsLost);
-        // var_dump('rounds lost : '.$roundsLost);
-        return $roundsLost;
-    }
-    public function getRoundsTied($roundRepository, $userId)
-    {
-        $query = $roundRepository->createQueryBuilder('p')
-            ->where('p.winner = :winner')
-            ->andWhere('p.user = :user')
-            ->setParameters(['winner' => 'tie', 'user' => $userId])
-            ->getQuery();
-
-        $roundsTied = $query->getResult();
-        
-        $roundsTied = count($roundsTied);
-        // var_dump('rounds tied : '.$roundsTied);
-        return $roundsTied;
-    }
-    public function getTopPlayers($userRepository)
-    {
-        $topPlayers = $userRepository->findBy(array(), array('wallet' => 'DESC'),5);
-        // echo '<pre>'; print_r($topPlayers); echo '</pre>';  
-        return $topPlayers; 
-    }
-
 }

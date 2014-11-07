@@ -12,8 +12,12 @@ use Doctrine\ORM\EntityRepository;
  */
 class UserRepository extends EntityRepository
 {
-	public function testRepo()
-	{
-		var_dump('test repo user ok');
-	}
+
+    public function getTopPlayers()
+    {
+    	$userRepository = $this->getEntityManager()->getRepository('LasVenturasBlackjackBundle:User');
+        $topPlayers = $userRepository->findBy(array(), array('wallet' => 'DESC'),5);
+        // echo '<pre>'; print_r($topPlayers); echo '</pre>';  
+        return $topPlayers; 
+    }
 }

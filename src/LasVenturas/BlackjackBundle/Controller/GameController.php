@@ -9,6 +9,7 @@ use LasVenturas\BlackjackBundle\Entity\User;
 use LasVenturas\BlackjackBundle\Entity\UserRepository;
 use LasVenturas\BlackjackBundle\Entity\Round;
 use LasVenturas\BlackjackBundle\Entity\Revealedcards;
+use LasVenturas\BlackjackBundle\Entity\RevealedcardsRepository;
 
 class GameController extends Controller
 {
@@ -40,7 +41,7 @@ class GameController extends Controller
         // get the user's credit
         $credit = $user->getWallet();
 
-        // create a form to choose a bet (range)    
+        // create a form to choose a bet    
         $form = $this->createFormBuilder($round)
             ->add('bet', 'number', array('label' => ' Bet : '))
             ->add('save', 'submit', array('label' => ' BET ! '))
@@ -50,7 +51,6 @@ class GameController extends Controller
         $form->handleRequest($request);
         // if form is valid
         if ($form->isValid()) {
-
 
             // store the bet that the user chose
             $userBet = $round->getbet();
@@ -95,15 +95,17 @@ class GameController extends Controller
 	        array_push($playerCards, $card2);
 	        $playerScore = $this->getPlayerScore($playerCards);
 
+            // store round repo in a variable to use it to call entity methods just below
+            $roundRepository = $em->getRepository('LasVenturasBlackjackBundle:Round');
             $playerVariablesToRender = array(
                         'playerCards' =>  $playerCards,
                         'name' => $userName,
                         'playerScore' => $playerScore,
                         'roundId' => $roundId
                         );
-
 	        if ($playerScore > 21){
-                $this->playerLoses($roundId, $userName);
+                // make actions corresponding to a lost game 
+                $roundRepository->playerLoses($roundId);
 	        	return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig',$playerVariablesToRender);
 	        } else {
 	        	if($playerScore == 21) {
@@ -115,9 +117,6 @@ class GameController extends Controller
 	        	}
 	        }
         }
-
-        // var_dump('Playa : '.$userName);   
-        // var_dump('Credit : '.$credit);   
         // render view with button start the game   
         return $this->render('LasVenturasBlackjackBundle:Game:pregame.html.twig', array(
             'form' => $form->createView(),
@@ -129,50 +128,31 @@ class GameController extends Controller
 	public function getRandomCard($deck, $roundId) 
 	{
 
-		// get a random card
+		// get a random card id
 		$cardId = rand(1, 52);
-		// var_dump('random card id: '.$cardId);
+
+        $RevealedCardsRepository = $this->getDoctrine()->getRepository('LasVenturasBlackjackBundle:Revealedcards');
 
 		// si la carte est déjà sortie, on relance la fonction getrandomcard()
-		if ($this->cardCameOutAlready($roundId, $cardId)){
-			$this->getRandomCard($deck, $roundId);
+		if ($RevealedCardsRepository->cardCameOutAlready($roundId, $cardId)){
+			return $this->getRandomCard($deck, $roundId);
 		}
 		$card = $deck[$cardId];
-		$this->storeRevealedCard($roundId, $cardId);
-		
+		// store the card that was just revealed in database
+		// query is in entity repository
+        $RevealedCardsRepository->storeRevealedCard($roundId, $cardId, $deck);
+		// renvoie la nouvelle carte
 		return $card;
-
-	}
-	public function cardCameOutAlready($roundId, $cardId)
-	{
-        $em = $this->getDoctrine()->getManager();
-        $repository = $em->getRepository('LasVenturasBlackjackBundle:Revealedcards');
-        $preExistingCard = $repository->findOneBy(array('roundId' => $roundId, 'cardId' => $cardId));
-        if ($preExistingCard) {
-            // var_dump('card invalid : was already drawn');
-        	return true;
-
-        }
-    	return false;
-	}
-	public function storeRevealedCard($roundId, $cardId)
-	{
-		// new revealed card
-		$revealedCard = new Revealedcards();
-		$revealedCard->setCardId($cardId);
-		$revealedCard->setRoundId($roundId);
-		// store revealed card in db
-		$em = $this->getDoctrine()->getManager();		
-		$em->persist($revealedCard);
-		$em->flush();
 
 	}
 	public function getPlayerScore($playerCards)
 	{
+        // initialize score
 		$score = 0;
 		// Add up all player cards value to get the score
 		foreach ($playerCards as $playerCard) {
 			$score = $score + $playerCard['value'];
+            // var_dump($playerCard['value']);
 		}
 		return $score;
 	}
@@ -186,7 +166,8 @@ class GameController extends Controller
         // find revealcards -> this will return an array of card ids
         $preExistingCards = $reaveledCards->findByRoundId($roundId);
         // get the round repo (for the deck and the score)
-        $round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
+        $roundRepository = $em->getRepository('LasVenturasBlackjackBundle:Round');
+        $round = $roundRepository->find($roundId);
         // get the deck of cards
         $deck = $round->getDeck();
         // initialize playercards array
@@ -222,15 +203,30 @@ class GameController extends Controller
 		if ($playerScore == 21){
 			$this->playerWins($roundId, $userName);
 			return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig', $variablesToRender);
-		} 
-		else {  
+		} else {  
 			if ($playerScore > 21) {
 				if ($this->hasAnAce($playerCards)){
-					$this->changeAceValueTo1($playerCards);
+					// si le joueur a plus de 21 et a un as, on change la valeur de la carte
+					$playerCards = $this->changeAceValueTo1($playerCards);
 					$playerScore = $this->getPlayerScore($playerCards);
-					return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', $variablesToRender); 	
+                    // var_dump('playerscore '.$playerScore);
+                    $variablesToRender = array_replace($variablesToRender, array('playerScore' =>$playerScore));
+                    if ($playerScore < 21) {
+                        return $this->render('LasVenturasBlackjackBundle:Game:game.html.twig', $variablesToRender); 
+                    } else {
+                        if ($playerScore == 21) {
+                            $this->playerWins($roundId,$userName);
+                            return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig', $variablesToRender); 
+                        } else {
+                            if ($playerScore > 21) {
+                                $roundRepository->playerLoses($roundId);
+                                return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', $variablesToRender);
+                            }
+                        }
+                    } 	
 				}
-                $this->playerLoses($roundId, $userName);
+                // make actions corresponding to a lost game
+                $roundRepository->playerLoses($roundId);
 				return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', $variablesToRender);
 			}
 		}
@@ -250,7 +246,8 @@ class GameController extends Controller
         // find revealcards -> this will return an array of card ids
         $preExistingCards = $reaveledCards->findByRoundId($roundId);
         // get the round repo (for the deck and the score)
-        $round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
+        $roundRepository = $em->getRepository('LasVenturasBlackjackBundle:Round');
+        $round = $roundRepository->find($roundId);
         // get the deck of cards
         $deck = $round->getDeck();
         // initialize playercards array
@@ -289,8 +286,8 @@ class GameController extends Controller
 			return $this->render('LasVenturasBlackjackBundle:Game:win.html.twig', $variablesToRender);
 		} else {
 			if ($bankScore > $playerScore){
-                $this->playerLoses($roundId, $userName);
-				// var_dump('bank wins because fuck you');
+                // make actions corresponding to a lost game
+                $roundRepository->playerLoses($roundId);
 				return $this->render('LasVenturasBlackjackBundle:Game:lose.html.twig', $variablesToRender);
 			} else {
 				if ($bankScore == $playerScore) {
@@ -310,13 +307,17 @@ class GameController extends Controller
 		// double the initial bet and add it to its score
 		$em = $this->getDoctrine()->getManager();
 		$round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
+        // get user's bet
 		$roundBet = $round->getBet();
+        // store winner's name
         $round->setWinner($userName);
 		
 		$user = $em->getRepository('LasVenturasBlackjackBundle:User')->findOneByName($userName);
+        // get user's credit
 		$userWallet = $user->getWallet();
         // calculate new wallet with the game earnings
 		$userWallet = $userWallet + $roundBet + $roundBet;
+        // store new wallet in user's wallet
 		$user->setWallet($userWallet);
 
 		//flush
@@ -325,28 +326,19 @@ class GameController extends Controller
 		$em->flush();
 		return false;
 	}
-    public function playerLoses($roundId, $userName)
-    {
-        // double the initial bet and add it to its score
-        $em = $this->getDoctrine()->getManager();
-        $round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
-        $round->setWinner('bank');
-        //flush
-        $em->persist($round);
-        $em->flush();
-        return false;
-    }
+
 	public function tie($roundId, $userName)
 	{
 		// get the ititial bet and give it back to the user
 		$em = $this->getDoctrine()->getManager();
 		$round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
+        // get this round's bet
 		$roundBet = $round->getBet();
         $round->setWinner('tie');
-		
+		// get the user's wallet 
 		$user = $em->getRepository('LasVenturasBlackjackBundle:User')->findOneByName($userName);
 		$userWallet = $user->getWallet();
-
+        // add round's bet back to the user's wallet
 		$userWallet = $userWallet + $roundBet;
 		$user->setWallet($userWallet);
 
@@ -358,9 +350,10 @@ class GameController extends Controller
 	}
 	public function hasAnAce($cards)
 	{
+        // loop through the user's deck searching for an ACE
 		foreach ($cards as $card){
-			if ($card['card'] == 'Ace'){
-				var_dump('ace found');
+			if ($card['card'] == 'A'){
+                // found an Ace in the user's deck of cards
 				return true;
 			}
 		}
@@ -368,11 +361,18 @@ class GameController extends Controller
 	}
 	public function changeAceValueTo1($cards)
 	{
-		
-		// x = indexof($card['Ace']
-		var_dump('changing ace value to 1');
+        // i keeps count and will be used as the index of the Ace card in the user's deck
+		$i = -1;
+        foreach ($cards as $card){
+            $i++;
+            if ($card['card'] == 'A'){
+                //save color of that ACE card (needed just after to replace the entry)
+                $color = $card['color'];
+                break;
+            }
+        }
+        // replace the value of that Ace card => 1
+        $cards[$i] = array_replace($cards[$i], array('card' => 'A', 'color'=> $color, 'value' => 1));
+        return $cards;
 	}
-
-
-
-	}
+}

@@ -12,5 +12,28 @@ use Doctrine\ORM\EntityRepository;
  */
 class RevealedcardsRepository extends EntityRepository
 {
-	
+	public function storeRevealedCard($roundId, $cardId)
+	{
+		// new revealed card
+		$revealedCard = new Revealedcards();
+		$revealedCard->setCardId($cardId);
+		$revealedCard->setRoundId($roundId);
+		// store revealed card in db
+		$em = $this->getEntityManager();
+		$em->persist($revealedCard);
+		$em->flush();
+
+	}	
+	public function cardCameOutAlready($roundId, $cardId)
+	{
+		// did that card come out already ?? find out right here
+        $em = $this->getEntityManager();
+        $RevealedCardRepository = $em->getRepository('LasVenturasBlackjackBundle:Revealedcards');
+        
+        $preExistingCard = $RevealedCardRepository->findOneBy(array('roundId' => $roundId, 'cardId' => $cardId));
+        if ($preExistingCard) {
+        	return true;
+        }
+    	return false;
+	}
 }

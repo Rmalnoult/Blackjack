@@ -102,7 +102,7 @@ class HomeController extends Controller
             // we implement a new response object (it's actually a redirect response, merci le symfony component qui permet cela)
             $response = new RedirectResponse('/');
             // and we pass it the cookie we have created
-            var_dump('userincookie: '.$request->cookies->get('blackJackPlayer'));
+            // var_dump('userincookie: '.$request->cookies->get('blackJackPlayer'));
             $response->headers->setCookie($cookie);
             // Then we send and return the response (to implement the cookie in the browser) and also redirect to home at the same time
             return $response;
