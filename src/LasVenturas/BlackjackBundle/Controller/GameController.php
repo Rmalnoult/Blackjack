@@ -71,7 +71,7 @@ class GameController extends Controller
             // take the bet out of his wallet
             $userWallet = $userWallet - $userBet;
             $user->setWallet($userWallet);
-            // store the userid in the round object
+            // store the userid in the round db
             $userId = $user->getId();
             $round->setUser($userId);
             $round->setWinner('nobody');
@@ -92,11 +92,14 @@ class GameController extends Controller
 	        $card1 = $this->getRandomCard($deck, $roundId);
 	        $playerCards = array($card1);
 	        $card2 = $this->getRandomCard($deck, $roundId);
+            //pushing card2 in the playerCards array
 	        array_push($playerCards, $card2);
+            // calculate score of playercards
 	        $playerScore = $this->getPlayerScore($playerCards);
 
             // store round repo in a variable to use it to call entity methods just below
             $roundRepository = $em->getRepository('LasVenturasBlackjackBundle:Round');
+
             $playerVariablesToRender = array(
                         'playerCards' =>  $playerCards,
                         'name' => $userName,
@@ -182,7 +185,7 @@ class GameController extends Controller
         $newCard = $this->getRandomCard($deck, $roundId);
         // push it in the playercards array
         array_push($playerCards, $newCard);
-        // calculate playerScore based with the new card 
+        // calculate playerScore with the new card 
         $playerScore = $this->getPlayerScore($playerCards);
         // save it in the Round object
        	$round->setPlayerScore($playerScore);
@@ -238,8 +241,6 @@ class GameController extends Controller
 
 	public function finishAction($userName, $roundId, $playerScore)
 	{
-		// var_dump('player card1'.$playerCards[0]['card'].' of '.$playerCards[0]['color']);
-		// var_dump('playerscore : '.$playerScore);
         $em = $this->getDoctrine()->getManager();
         // get the revealcards repo 
         $reaveledCards = $em->getRepository('LasVenturasBlackjackBundle:Revealedcards');

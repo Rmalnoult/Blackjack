@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 
-
 use LasVenturas\BlackjackBundle\Entity\User;
 
 class HomeController extends Controller
@@ -34,13 +33,10 @@ class HomeController extends Controller
     public function login()
     {
 
-        // when no cookie parameter is found, this function is played
-
-
+        // when no cookie is found, this function is played
         $request = $this->getRequest();
         // var_dump('cookie found');
         // var_dump('dat cookie: '.$request->cookies->get('blackJackPlayer'));
-
 
         //get the name associated with the cookie
         $cookieName = $request->cookies->get('blackJackPlayer');
@@ -104,7 +100,7 @@ class HomeController extends Controller
             // and we pass it the cookie we have created
             // var_dump('userincookie: '.$request->cookies->get('blackJackPlayer'));
             $response->headers->setCookie($cookie);
-            // Then we send and return the response (to implement the cookie in the browser) and also redirect to home at the same time
+            // Then we send by returning the response (to implement the cookie in the browser) and also redirect to home at the same time
             return $response;
         }
 
