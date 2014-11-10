@@ -4,6 +4,9 @@ namespace LasVenturas\BlackjackBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 
+use LasVenturas\BlackjackBundle\Entity\User;
+use LasVenturas\BlackjackBundle\Entity\UserRepository;
+
 /**
  * RoundRepository
  *
@@ -69,6 +72,30 @@ class RoundRepository extends EntityRepository
         $round = $roundRepository->find($roundId);
         $round->setWinner('bank');
         //flush
+        $em->persist($round);
+        $em->flush();
+        return true;
+    }
+    public function playerWins($roundId, $userName)
+    {
+        // double the initial bet and add it to its score
+        $em = $this->getEntityManager();
+        $round = $em->getRepository('LasVenturasBlackjackBundle:Round')->find($roundId);
+        // get user's bet
+        $roundBet = $round->getBet();
+        // store winner's name
+        $round->setWinner($userName);
+        
+        $user = $em->getRepository('LasVenturasBlackjackBundle:User')->findOneByName($userName);
+        // get user's credit
+        $userWallet = $user->getWallet();
+        // calculate new wallet with the game earnings
+        $userWallet = $userWallet + $roundBet + $roundBet;
+        // store new wallet in user's wallet
+        $user->setWallet($userWallet);
+
+        //flush
+        $em->persist($user);
         $em->persist($round);
         $em->flush();
         return true;
