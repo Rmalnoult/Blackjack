@@ -83,7 +83,7 @@ class HomeController extends Controller
             // store the username in database
             $user->setName($userName); 
 
-            var_dump('user: '.$user->getName());
+            // var_dump('user: '.$user->getName());
 
             // initialize the user's wallet
             $user->setWallet(10000);
